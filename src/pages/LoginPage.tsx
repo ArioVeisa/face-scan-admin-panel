@@ -6,14 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface LoginPageProps {
-  onLogin: () => void;
+  onLogin: (isAdmin: boolean) => void;
 }
 
 const LoginPage = ({ onLogin }: LoginPageProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -26,11 +28,12 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
     setTimeout(() => {
       // Simple validation
       if (email && password) {
-        onLogin();
+        // Pass the role to the parent component
+        onLogin(isAdmin);
         navigate("/");
         toast({
           title: "Login berhasil",
-          description: "Selamat datang di Face Scan Admin Panel",
+          description: `Selamat datang di Face Scan ${isAdmin ? "Admin" : "User"} Panel`,
         });
       } else {
         toast({
@@ -54,14 +57,14 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             </div>
           </div>
           <h1 className="mt-4 text-2xl font-bold text-gray-900">Face Scan</h1>
-          <p className="text-sm text-gray-600">Admin Panel Sistem Deteksi Wajah Mahasiswa</p>
+          <p className="text-sm text-gray-600">Sistem Deteksi Wajah Mahasiswa</p>
         </div>
 
         <Card className="animate-fade-in">
           <CardHeader>
             <CardTitle>Login</CardTitle>
             <CardDescription>
-              Masuk ke dashboard admin untuk mengelola sistem deteksi wajah
+              Masuk ke sistem deteksi wajah mahasiswa
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
@@ -87,6 +90,19 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="admin" 
+                  checked={isAdmin}
+                  onCheckedChange={(checked) => setIsAdmin(checked === true)}
+                />
+                <label
+                  htmlFor="admin"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Login sebagai Admin
+                </label>
               </div>
             </CardContent>
             <CardFooter>

@@ -14,7 +14,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const DashboardLayout = () => {
+interface DashboardLayoutProps {
+  userRole: "admin" | "user";
+}
+
+const DashboardLayout = ({ userRole }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,10 +32,13 @@ const DashboardLayout = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Menu items configuration
+  // Menu items configuration based on user role
   const menuItems = [
     { path: "/", icon: <User size={20} />, label: "Dashboard" },
-    { path: "/mahasiswa", icon: <Users size={20} />, label: "Mahasiswa" },
+    // Only show Mahasiswa for admins
+    ...(userRole === "admin" 
+      ? [{ path: "/mahasiswa", icon: <Users size={20} />, label: "Mahasiswa" }] 
+      : []),
     { path: "/deteksi", icon: <Camera size={20} />, label: "Deteksi Wajah" },
     { path: "/riwayat", icon: <History size={20} />, label: "Riwayat" },
   ];
@@ -50,10 +57,10 @@ const DashboardLayout = () => {
             >
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
-            <h1 className="text-xl font-bold">Face Scan Admin</h1>
+            <h1 className="text-xl font-bold">Face Scan {userRole === "admin" ? "Admin" : ""}</h1>
           </div>
           <div className="flex items-center">
-            <span className="text-sm mr-2">Admin</span>
+            <span className="text-sm mr-2">{userRole === "admin" ? "Admin" : "User"}</span>
             <div className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">
               <User size={16} />
             </div>
@@ -74,8 +81,10 @@ const DashboardLayout = () => {
       >
         {/* Sidebar Header */}
         <div className="p-6">
-          <h1 className="text-xl font-bold">Face Scan Admin</h1>
-          <p className="text-sidebar-foreground/70 text-sm">Management Dashboard</p>
+          <h1 className="text-xl font-bold">Face Scan {userRole === "admin" ? "Admin" : ""}</h1>
+          <p className="text-sidebar-foreground/70 text-sm">
+            {userRole === "admin" ? "Management Dashboard" : "User Dashboard"}
+          </p>
         </div>
 
         <Separator className="bg-sidebar-border/50" />
@@ -141,7 +150,9 @@ const DashboardLayout = () => {
             <div></div> {/* Spacer */}
             
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium">Administrator</span>
+              <span className="text-sm font-medium">
+                {userRole === "admin" ? "Administrator" : "User"}
+              </span>
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                 <User size={16} />
               </div>

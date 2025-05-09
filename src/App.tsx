@@ -17,9 +17,11 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = (adminRole: boolean) => {
     setIsLoggedIn(true);
+    setIsAdmin(adminRole);
   };
 
   return (
@@ -32,9 +34,10 @@ const App = () => {
             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
             
             {/* Protected routes */}
-            <Route element={<DashboardLayout />}>
+            <Route element={<DashboardLayout userRole={isAdmin ? "admin" : "user"} />}>
               <Route path="/" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
-              <Route path="/mahasiswa" element={isLoggedIn ? <StudentsPage /> : <Navigate to="/login" />} />
+              {/* Admin only routes */}
+              <Route path="/mahasiswa" element={isLoggedIn && isAdmin ? <StudentsPage /> : <Navigate to={isLoggedIn ? "/" : "/login"} />} />
               <Route path="/deteksi" element={isLoggedIn ? <FaceDetectionPage /> : <Navigate to="/login" />} />
               <Route path="/riwayat" element={isLoggedIn ? <HistoryPage /> : <Navigate to="/login" />} />
             </Route>
