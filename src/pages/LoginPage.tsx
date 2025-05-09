@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 
 interface LoginPageProps {
@@ -16,7 +15,6 @@ interface LoginPageProps {
 const LoginPage = ({ onLogin }: LoginPageProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -30,12 +28,15 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
     setTimeout(() => {
       // Simple validation
       if (email && password) {
+        // For demo purposes, we'll assume emails ending with "admin" are admins
+        const isAdmin = email.includes("admin");
+        
         // Pass the role to the parent component
         onLogin(isAdmin);
         navigate("/");
         toast({
           title: "Login berhasil",
-          description: `Selamat datang di Face Scan ${isAdmin ? "Admin" : "User"} Panel`,
+          description: `Selamat datang di Face Scan Panel`,
         });
       } else {
         toast({
@@ -102,24 +103,6 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-              </div>
-
-              <div className="py-2 space-y-2">
-                <Label htmlFor="role-selection">Login Sebagai</Label>
-                <RadioGroup 
-                  defaultValue="user"
-                  onValueChange={(value) => setIsAdmin(value === "admin")}
-                  className="flex flex-col space-y-1 border rounded-md p-3 bg-gray-50"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="user" id="user" />
-                    <Label htmlFor="user" className="cursor-pointer">User</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="admin" id="admin" />
-                    <Label htmlFor="admin" className="cursor-pointer">Admin</Label>
-                  </div>
-                </RadioGroup>
               </div>
             </CardContent>
             <CardFooter>
