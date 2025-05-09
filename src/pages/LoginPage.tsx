@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 
 interface LoginPageProps {
   onLogin: (isAdmin: boolean) => void;
@@ -17,6 +18,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
   const [password, setPassword] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -82,27 +84,42 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="pr-10"
+                  />
+                  <button 
+                    type="button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="admin" 
-                  checked={isAdmin}
-                  onCheckedChange={(checked) => setIsAdmin(checked === true)}
-                />
-                <label
-                  htmlFor="admin"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+
+              <div className="py-2 space-y-2">
+                <Label htmlFor="role-selection">Login Sebagai</Label>
+                <RadioGroup 
+                  defaultValue="user"
+                  onValueChange={(value) => setIsAdmin(value === "admin")}
+                  className="flex flex-col space-y-1 border rounded-md p-3 bg-gray-50"
                 >
-                  Login sebagai Admin
-                </label>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="user" id="user" />
+                    <Label htmlFor="user" className="cursor-pointer">User</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="admin" id="admin" />
+                    <Label htmlFor="admin" className="cursor-pointer">Admin</Label>
+                  </div>
+                </RadioGroup>
               </div>
             </CardContent>
             <CardFooter>
@@ -111,7 +128,12 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? "Memproses..." : "Login"}
+                {isLoading ? "Memproses..." : (
+                  <>
+                    <LogIn className="mr-2" size={18} />
+                    Login
+                  </>
+                )}
               </Button>
             </CardFooter>
           </form>
